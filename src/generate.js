@@ -53,8 +53,6 @@ function generateQuestionHtml(q) {
     <article class="question">
       <h3>${cleanText(q.question)}</h3>
 
-      <input type="text" class="answer-input" placeholder="Skrifaðu svar hér" />
-
       <button class="show-answer">Sýna svar</button>
 
       <div class="answer hidden">

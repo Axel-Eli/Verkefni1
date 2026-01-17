@@ -91,6 +91,7 @@ a {
 }
 
 a:hover{
+    color: blue;
     cursor: pointer;
 }
 
