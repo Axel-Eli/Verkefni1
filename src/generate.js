@@ -33,11 +33,25 @@ const MAX_QUESTIONS_PER_CATEGORY = 100
             </html>`
     }
 
+function cleanText(text){
+    if(!text) return text
+    let cleaned = text
+
+    if (cleaned.startsWith('"') && cleaned.endsWith('"')){
+      cleaned = cleaned.slice(1, -1)
+    }
+
+    cleaned = cleaned.replace(/""/g, '"')
+
+    return cleaned
+
+  }
 
 function generateQuestionHtml(q) {
+  
   return `
     <article class="question">
-      <h3>${q.question}</h3>
+      <h3>${cleanText(q.question)}</h3>
 
       <input type="text" class="answer-input" placeholder="Skrifaðu svar hér" />
 
@@ -63,7 +77,7 @@ async function main() {
       .filter(Boolean)
 
     const qualityQuestions = questions
-      .filter((q) => Number(q.quality) === 3);
+      .filter((q) => Number(q.diff) >= 1);
 
     const categories = {}
 

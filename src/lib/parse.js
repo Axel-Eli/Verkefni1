@@ -4,27 +4,27 @@ export function parseQuestions(line) {
   }
 
   // Split CSV line while respecting quoted commas
-  const parts = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g)
+  const parts = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) ?? []
 
-  if (!parts || parts.length < 6) {
-    console.warn('Ógild lína', line)
-    return null
+  while (parts.length < 6) {
+    parts.push('')
   }
 
-  const categoryNumber = parts[0].trim()
-  const category = parts[1].trim()
-  const quality = parts[2].trim()
+  const categoryNumber = parts[0].trim() || null
+  const category = parts[1].trim() || 'Almennt'
+  const diff = Number(parts[2])
+  const quality = Number(parts[3]) || 1
   const question = parts[4]?.trim()
   const answer = parts[5]?.trim()
 
-  if (!category || !question || !answer || !quality) {
-    console.warn('Ógild lína', line)
-    return null
+  if (!categoryNumber || !diff || !question || !answer) {
+    return line
   }
 
   return {
     categoryNumber,
     category,
+    diff,
     quality,
     question,
     answer,
