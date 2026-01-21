@@ -4,9 +4,18 @@ import { parseQuestions } from './lib/parse.js'
 
 const MAX_QUESTIONS_PER_CATEGORY = 100
 
-  function generateIndexnHtml(categories){
-    const links = Object.entries(categories).map(([slug, category]) =>
-        `<li><a href="${slug}.html">${category.name}</a></li>`).join('\n')
+const CATEGORY_MAP = {
+  1: 'Almenn kunnátta',
+  2: 'Náttúra og vísindi',
+  3: 'Bókmenntir og listir',
+  4: 'Saga',
+  5: 'Landafræði',
+  6: 'Skemmtun og afþreying',
+  7: 'Íþróttir og tómstundir',
+}
+  function generateIndexHtml(categories){
+    const links = Object.values(categories).map(category =>
+        `<li><a href="${category.slug}.html">${category.name}</a></li>`).join('\n')
   
     return `<!DOCTYPE html>
             <html lang = "is">
@@ -50,7 +59,10 @@ function cleanText(text){
 function generateQuestionHtml(q) {
   
   return `
-    <article class="question">
+    <article 
+      class="question"
+      data-subcategory="${q.subcategory ?? 'all'}"
+      >
       <h3>${cleanText(q.question)}</h3>
 
       <button class="show-answer">Sýna svar</button>
@@ -79,32 +91,37 @@ async function main() {
 
     const categories = {}
 
-    for(const q of qualityQuestions){
-
-      if(!q.category){
-        continue
-      }
-      
-      const slug = q.category.toLowerCase().replace(/\s+/g, '-')
-
-      if(!categories[slug]){
-        categories[slug] = {
-          name: q.category,
-          questions: []
-        }
-      }
-
-      if(categories[slug].questions.length < MAX_QUESTIONS_PER_CATEGORY){
-        categories[slug].questions.push(q)
+    for(const [id, name] of Object.entries(CATEGORY_MAP)) {
+      categories[id] = {
+        id: Number(id),
+        name,
+        slug: name
+          .toLowerCase()
+          .replace(/[ðþ]/g, 'd')
+          .replace(/[^a-záðéíóúýöæ\s-]/gi, '')
+          .replace(/\s+/g, '-'),
+        questions: []
       }
     }
 
-  const indexHtml = generateIndexnHtml(categories)
+    for (const q of qualityQuestions) {
+  const catId = Number(q.categoryNumber)
+
+  if (!categories[catId]) {
+    continue
+  }
+
+  if (categories[catId].questions.length < MAX_QUESTIONS_PER_CATEGORY) {
+    categories[catId].questions.push(q)
+  }
+}
+
+  const indexHtml = generateIndexHtml(categories)
 
   await fs.mkdir('./dist', { recursive: true })
   await fs.writeFile('./dist/index.html', indexHtml, 'utf8')
 
-  for(const [slug, category] of Object.entries(categories)){
+  for (const category of Object.values(categories)) {
     const questionsHtml = category.questions
       .map(generateQuestionHtml)
       .join('\n')
@@ -127,7 +144,7 @@ async function main() {
                           <script src="./scripts.js"></script>
                         </body>
                       </html>`
-    await fs.writeFile(`./dist/${slug}.html`, output, 'utf8')
+    await fs.writeFile(`./dist/${category.slug}.html`, output, 'utf8')
     
   }
 }

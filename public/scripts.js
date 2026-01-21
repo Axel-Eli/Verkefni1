@@ -40,3 +40,15 @@ document.addEventListener('click',
         }
     }
 )
+
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const filter = btn.dataset.filter
+
+    document.querySelectorAll('.question').forEach(q => {
+      q.hidden =
+        filter !== 'all' &&
+        q.dataset.subcategory !== filter
+    })
+  })
+})
