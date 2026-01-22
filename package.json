@@ -14,7 +14,7 @@
     "build:copy-public": "cpy public dist --flat",
     "dev": "browser-sync start --serveStatic ./dist --server --files ./dist/*.* ./dist/*.*",
     "lint": "eslint",
-    "format": "prettier --write .",
+    "format": "prettier --write .", 
     "format:check": "prettier --check .",
     "test": "node --test --experimental-test-module-mocks",
     "test:watch": "node --test --watch --experimental-test-module-mocks",

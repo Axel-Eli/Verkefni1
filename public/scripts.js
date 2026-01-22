@@ -1,6 +1,7 @@
+//rétt og rangt tracker
 let correct = 0;
 let wrong = 0;
-
+//uppfærir stöðuna eftir að er ýtt á rangt eða rétt
 function updateScore() {
   let score = document.querySelector("#score");
 
@@ -13,7 +14,7 @@ function updateScore() {
 
   score.textContent = `Rétt: ${correct} | Rangt: ${wrong}`;
 }
-
+//felum svarið til að byrja með svo þegar ýtt er á "sýna svar" þá birtist það með tökkunum rétt og rangt
 document.addEventListener("click", (event) => {
   const target = event.target;
 

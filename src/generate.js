@@ -3,6 +3,7 @@ import { parseQuestions } from "./lib/parse.js";
 
 const MAX_QUESTIONS_PER_CATEGORY = 100;
 
+//map fyrir öll flokka númer og heitin á þeim
 const CATEGORY_MAP = {
   1: "Almenn kunnátta",
   2: "Náttúra og vísindi",
@@ -12,6 +13,8 @@ const CATEGORY_MAP = {
   6: "Skemmtun og afþreying",
   7: "Íþróttir og tómstundir",
 };
+
+//index generator býr til aðal síðuna og fær svo flokkana inn.
 function generateIndexHtml(categories) {
   const links = Object.values(categories)
     .map(
@@ -45,6 +48,7 @@ function generateIndexHtml(categories) {
             </html>`;
 }
 
+//gerir textan þannig að við höfum ekki tví "" t.d. hver gerði lagið ""Gleðibankinn""
 function cleanText(text) {
   if (!text) return text;
   let cleaned = text;
@@ -58,6 +62,7 @@ function cleanText(text) {
   return cleaned;
 }
 
+//býr til spurninga html-in þar sem við erum með voða beisík layout fyrir allt.
 function generateQuestionHtml(q) {
   return `
     <article 
@@ -79,6 +84,7 @@ function generateQuestionHtml(q) {
   `;
 }
 
+//main les inn öll gögn gerir okkur kleift að gera rest sendir gögn yfir á parse og fær tilbaka spurningar í flokkum.
 async function main() {
   const content = await fs.readFile("./questions.csv", "utf8");
   const lines = content.split("\n");

@@ -1,11 +1,13 @@
 let skippedRowCount = 0;
 const MAX_SKIPPED_WARNINGS = 10;
 
+//klýfur eina csv línu í reiti.
 function splitCsvLine(line) {
   const parts = [];
   let current = "";
   let inQuotes = false;
 
+  //fer í gegnum strengin per staf og safnar í reit
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
 
@@ -43,6 +45,8 @@ export function parseQuestions(line) {
     parts.push("");
   }
 
+  //fá flokka og ef það er eitthvað að csv þá bætum við því við, hoppað yfir hluti sem eru núll
+  //til þess að eyðileggja ekki flokkana
   const categoryNumber = Number(parts[0]);
   const subcategory = parts[1].trim() || null;
   const diff = Number(parts[2]);
@@ -60,6 +64,8 @@ export function parseQuestions(line) {
     answer = answer.slice(1, -1).replace(/""/g, '"');
   }
 
+  //var að fá err þar sem spurningar poppuðu ekki upp gerði console warn
+  //til að vera ekki alveg blindur að laga hluti
   if (!categoryNumber || Number.isNaN(diff) || !question || !answer) {
     if (skippedRowCount < MAX_SKIPPED_WARNINGS) {
       console.warn("Hoppaði yfir röð:", {
@@ -77,6 +83,7 @@ export function parseQuestions(line) {
     return null;
   }
 
+  //skila öllum flokkum
   return {
     categoryNumber,
     subcategory,
