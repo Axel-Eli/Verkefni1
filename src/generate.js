@@ -1,23 +1,26 @@
-import fs from 'node:fs/promises'
-import { parseQuestions } from './lib/parse.js'
+import fs from "node:fs/promises";
+import { parseQuestions } from "./lib/parse.js";
 
-
-const MAX_QUESTIONS_PER_CATEGORY = 100
+const MAX_QUESTIONS_PER_CATEGORY = 100;
 
 const CATEGORY_MAP = {
-  1: 'Almenn kunnátta',
-  2: 'Náttúra og vísindi',
-  3: 'Bókmenntir og listir',
-  4: 'Saga',
-  5: 'Landafræði',
-  6: 'Skemmtun og afþreying',
-  7: 'Íþróttir og tómstundir',
-}
-  function generateIndexHtml(categories){
-    const links = Object.values(categories).map(category =>
-        `<li><a href="${category.slug}.html">${category.name}</a></li>`).join('\n')
-  
-    return `<!DOCTYPE html>
+  1: "Almenn kunnátta",
+  2: "Náttúra og vísindi",
+  3: "Bókmenntir og listir",
+  4: "Saga",
+  5: "Landafræði",
+  6: "Skemmtun og afþreying",
+  7: "Íþróttir og tómstundir",
+};
+function generateIndexHtml(categories) {
+  const links = Object.values(categories)
+    .map(
+      (category) =>
+        `<li><a href="${category.slug}.html">${category.name}</a></li>`,
+    )
+    .join("\n");
+
+  return `<!DOCTYPE html>
             <html lang = "is">
                 <head>
                     <meta charset="utf8">
@@ -39,29 +42,27 @@ const CATEGORY_MAP = {
                         </ul>
                     </main>
                 </body>
-            </html>`
-    }
+            </html>`;
+}
 
-function cleanText(text){
-    if(!text) return text
-    let cleaned = text
+function cleanText(text) {
+  if (!text) return text;
+  let cleaned = text;
 
-    if (cleaned.startsWith('"') && cleaned.endsWith('"')){
-      cleaned = cleaned.slice(1, -1)
-    }
-
-    cleaned = cleaned.replace(/""/g, '"')
-
-    return cleaned
-
+  if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
+    cleaned = cleaned.slice(1, -1);
   }
 
+  cleaned = cleaned.replace(/""/g, '"');
+
+  return cleaned;
+}
+
 function generateQuestionHtml(q) {
-  
   return `
     <article 
       class="question"
-      data-subcategory="${q.subcategory ?? 'all'}"
+      data-subcategory="${q.subcategory ?? "all"}"
       >
       <h3>${cleanText(q.question)}</h3>
 
@@ -75,56 +76,53 @@ function generateQuestionHtml(q) {
         </div>
       </div>
     </article>
-  `
+  `;
 }
 
 async function main() {
-  const content = await fs.readFile('./questions.csv', 'utf8')
-    const lines = content.split('\n')
+  const content = await fs.readFile("./questions.csv", "utf8");
+  const lines = content.split("\n");
 
-    const questions = lines
-      .map(parseQuestions)
-      .filter(Boolean)
+  const questions = lines.map(parseQuestions).filter(Boolean);
 
-    const qualityQuestions = questions
-      .filter((q) => Number(q.diff) >= 1);
+  const qualityQuestions = questions.filter((q) => Number(q.diff) >= 1);
 
-    const categories = {}
+  const categories = {};
 
-    for(const [id, name] of Object.entries(CATEGORY_MAP)) {
-      categories[id] = {
-        id: Number(id),
-        name,
-        slug: name
-          .toLowerCase()
-          .replace(/[ðþ]/g, 'd')
-          .replace(/[^a-záðéíóúýöæ\s-]/gi, '')
-          .replace(/\s+/g, '-'),
-        questions: []
-      }
+  for (const [id, name] of Object.entries(CATEGORY_MAP)) {
+    categories[id] = {
+      id: Number(id),
+      name,
+      slug: name
+        .toLowerCase()
+        .replace(/[ðþ]/g, "d")
+        .replace(/[^a-záðéíóúýöæ\s-]/gi, "")
+        .replace(/\s+/g, "-"),
+      questions: [],
+    };
+  }
+
+  for (const q of qualityQuestions) {
+    const catId = Number(q.categoryNumber);
+
+    if (!categories[catId]) {
+      continue;
     }
 
-    for (const q of qualityQuestions) {
-  const catId = Number(q.categoryNumber)
-
-  if (!categories[catId]) {
-    continue
+    if (categories[catId].questions.length < MAX_QUESTIONS_PER_CATEGORY) {
+      categories[catId].questions.push(q);
+    }
   }
 
-  if (categories[catId].questions.length < MAX_QUESTIONS_PER_CATEGORY) {
-    categories[catId].questions.push(q)
-  }
-}
+  const indexHtml = generateIndexHtml(categories);
 
-  const indexHtml = generateIndexHtml(categories)
-
-  await fs.mkdir('./dist', { recursive: true })
-  await fs.writeFile('./dist/index.html', indexHtml, 'utf8')
+  await fs.mkdir("./dist", { recursive: true });
+  await fs.writeFile("./dist/index.html", indexHtml, "utf8");
 
   for (const category of Object.values(categories)) {
     const questionsHtml = category.questions
       .map(generateQuestionHtml)
-      .join('\n')
+      .join("\n");
 
     const output = `<!DOCTYPE html>
                       <html lang="is">
@@ -143,12 +141,11 @@ async function main() {
 
                           <script src="./scripts.js"></script>
                         </body>
-                      </html>`
-    await fs.writeFile(`./dist/${category.slug}.html`, output, 'utf8')
-    
+                      </html>`;
+    await fs.writeFile(`./dist/${category.slug}.html`, output, "utf8");
   }
 }
 
 main().catch((error) => {
-  console.error('error generating', error);
+  console.error("error generating", error);
 });

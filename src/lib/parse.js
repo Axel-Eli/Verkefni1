@@ -1,41 +1,68 @@
-let skippedRowCount = 0
-const MAX_SKIPPED_WARNINGS = 10
+let skippedRowCount = 0;
+const MAX_SKIPPED_WARNINGS = 10;
+
+function splitCsvLine(line) {
+  const parts = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (ch === "," && !inQuotes) {
+      parts.push(current);
+      current = "";
+      continue;
+    }
+
+    current += ch;
+  }
+
+  parts.push(current);
+  return parts;
+}
+
 export function parseQuestions(line) {
   if (!line) {
-    return null
+    return null;
   }
 
-  // Split CSV line while respecting quoted commas
-  const parts = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) ?? []
+  const parts = splitCsvLine(line);
 
   while (parts.length < 6) {
-    parts.push('')
+    parts.push("");
   }
 
-  const categoryNumber = Number(parts[0].trim()) || null
-  const subcategory = parts[1].trim() || null
-  const diff = Number(parts[2])
+  const categoryNumber = Number(parts[0]);
+  const subcategory = parts[1].trim() || null;
+  const diff = Number(parts[2]);
 
-  // quality is optional and often missing; default to 1 if not numeric
-  const quality = Number.isNaN(Number(parts[3])) ? 1 : Number(parts[3])
+  const quality = Number.isNaN(Number(parts[3])) ? 1 : Number(parts[3]);
 
-  // Extract potential text fields (everything except numeric metadata)
-  const textFields = parts
-    .slice(3)
-    .map(p => p.trim())
-    .filter(Boolean)
+  let question = parts[4]?.trim() ?? "";
+  let answer = parts[5]?.trim() ?? "";
 
-  let question = textFields[0] ?? ''
-  let answer = textFields[1] ?? ''
+  if (question.startsWith('"') && question.endsWith('"')) {
+    question = question.slice(1, -1).replace(/""/g, '"');
+  }
 
-  if (
-    !categoryNumber ||
-    Number.isNaN(diff) ||
-    !question ||
-    !answer
-  ) {
+  if (answer.startsWith('"') && answer.endsWith('"')) {
+    answer = answer.slice(1, -1).replace(/""/g, '"');
+  }
+
+  if (!categoryNumber || Number.isNaN(diff) || !question || !answer) {
     if (skippedRowCount < MAX_SKIPPED_WARNINGS) {
-      console.warn('⚠️ Skipped row:', {
+      console.warn("Hoppaði yfir röð:", {
         raw: line,
         categoryNumber,
         subcategory,
@@ -43,11 +70,11 @@ export function parseQuestions(line) {
         quality,
         question,
         answer,
-        parts
-      })
+        parts,
+      });
     }
-    skippedRowCount++
-    return null
+    skippedRowCount++;
+    return null;
   }
 
   return {
@@ -57,5 +84,5 @@ export function parseQuestions(line) {
     quality,
     question,
     answer,
-  }
+  };
 }

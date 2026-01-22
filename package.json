@@ -14,6 +14,8 @@
     "build:copy-public": "cpy public dist --flat",
     "dev": "browser-sync start --serveStatic ./dist --server --files ./dist/*.* ./dist/*.*",
     "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "node --test --experimental-test-module-mocks",
     "test:watch": "node --test --watch --experimental-test-module-mocks",
     "test:coverage": "node --test --experimental-test-coverage --experimental-test-module-mocks"
@@ -25,7 +27,8 @@
     "@eslint/css": "^0.14.1",
     "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
-    "globals": "^17.0.0"
+    "globals": "^17.0.0",
+    "prettier": "^3.8.1"
   },
   "dependencies": {
     "cpy-cli": "^6.0.0",
