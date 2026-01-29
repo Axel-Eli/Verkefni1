@@ -27,6 +27,7 @@ function generateIndexHtml(categories) {
             <html lang = "is">
                 <head>
                     <meta charset="utf8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
                     <title>Spurninga leikur</title>
                     <link rel = "stylesheet" href="./styles.css">
                 </head>
@@ -36,7 +37,7 @@ function generateIndexHtml(categories) {
                         <h1>Spurninga, Spurninga, Spurninga...</h1>
                         <h1>LEIKURINN</h1>
 
-                        <p>Vertu velkominn spurninga meistarinn þinn á spurningavefinn</p>
+                        <p>Vertu velkominn, spurninga meistarinn þinn á spurningavefinn</p>
                         <p>hér finnur þú allar spurningar úr öllum mögulegum flokkum, ekki nóg með það þá 
                             hefur þessi vefur líka valmöguleika á hvaða flokkum þú vilt svara spurningum úr.
                         </p>
@@ -134,6 +135,7 @@ async function main() {
                       <html lang="is">
                         <head>
                           <meta charset="utf-8">
+                          <meta name="viewport" content="width=device-width, initial-scale=1">
                           <title>${category.name}</title>
                           <link rel="stylesheet" href="./styles.css">
                         </head>

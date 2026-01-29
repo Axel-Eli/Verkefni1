@@ -30,13 +30,23 @@ document.addEventListener("click", (event) => {
     updateScore();
 
     const question = target.closest(".question");
-    question.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+    const actionButtons = question.querySelectorAll(".actions button");
+    actionButtons.forEach((btn) => {
+      btn.disabled = true;
+      btn.classList.toggle("choice-selected", btn === target);
+      btn.classList.toggle("choice-dim", btn !== target);
+    });
   } else if (target.hasAttribute("data-wrong")) {
     wrong++;
     updateScore();
 
     const question = target.closest(".question");
-    question.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+    const actionButtons = question.querySelectorAll(".actions button");
+    actionButtons.forEach((btn) => {
+      btn.disabled = true;
+      btn.classList.toggle("choice-selected", btn === target);
+      btn.classList.toggle("choice-dim", btn !== target);
+    });
   }
 });
 

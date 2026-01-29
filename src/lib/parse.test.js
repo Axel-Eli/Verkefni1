@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { parseQuestions } from "./parse.js";
 
 describe("parseQuestions", () => {
-  it("parses a quoted question with escaped quotes", () => {
+  it("parsar valdna línu úr csv með double kvót merki", () => {
     const line =
       '6,Tónlist,2,2,"Hvaða hljómsveit gerði lagið ""Rangur maður""",Sólstrandargæjarnir';
 
@@ -19,7 +19,7 @@ describe("parseQuestions", () => {
     });
   });
 
-  it("allows empty subcategory but still parses", () => {
+  it("leyfir tómu subcategory og parsar ennþá", () => {
     const line = "5,,3,2,Í hvaða landi eru héruðin Epírus og Þrakía,Grikklandi";
 
     const result = parseQuestions(line);
@@ -34,7 +34,7 @@ describe("parseQuestions", () => {
     });
   });
 
-  it("uses default quality when value is not numeric", () => {
+  it("notar default quality þegar gildi er ekki tala", () => {
     const line = "1,Test,2,foo,Spurning,Svar";
 
     const result = parseQuestions(line);
@@ -49,13 +49,13 @@ describe("parseQuestions", () => {
     });
   });
 
-  it("returns null when line is empty", () => {
+  it("skilar núll ef það er eitthvað empty", () => {
     const result = parseQuestions("");
 
     assert.strictEqual(result, null);
   });
 
-  it("returns null when answer is missing", () => {
+  it("skilar núll ef svar vantar", () => {
     const line = "1,Test,2,2,Spurning,";
 
     const result = parseQuestions(line);
