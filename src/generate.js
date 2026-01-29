@@ -36,9 +36,9 @@ function generateIndexHtml(categories) {
                         <h1>Spurninga, Spurninga, Spurninga...</h1>
                         <h1>LEIKURINN</h1>
 
-                        <p>Vertu velkominn spurninga meistrinn þinn á spurningavefinn</p>
+                        <p>Vertu velkominn spurninga meistarinn þinn á spurningavefinn</p>
                         <p>hér finnur þú allar spurningar úr öllum mögulegum flokkum, ekki nóg með það þá 
-                            hefur þessi vefur líka valmöguleika á hvaða flokkum þú vilt svara spurningum úr
+                            hefur þessi vefur líka valmöguleika á hvaða flokkum þú vilt svara spurningum úr.
                         </p>
                         <ul>
                             ${links}
@@ -94,7 +94,7 @@ async function main() {
   const qualityQuestions = questions.filter((q) => Number(q.diff) >= 1);
 
   const categories = {};
-
+  //breytir almennum íslenskum stöfum eins og ð og þ þannig að það brýtur ekki hlekki.
   for (const [id, name] of Object.entries(CATEGORY_MAP)) {
     categories[id] = {
       id: Number(id),
